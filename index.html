@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=1200,user-scalable=yes" />
+<link rel="stylesheet" href="./css/default.css">
+<link rel="stylesheet" href="./css/subpage.css">
+<link rel="stylesheet" href="./css/playlist.css">
+<script src="./js/libs/jquery-1.7.1.min.js"></script>
+<script src="./js/libs/jquery-ui-1.9.2.custom.min.js"></script>
+<script src="./js/libs/jquery.easing.1.3.js"></script>
+<script src="./js/plugins/customSelect.jquery.min.js"></script>
+<script src="./js/plugins/jquery.grid.core.js"></script>
+<script src="./js/plugins/smoothScroll.js"></script>
+<script src="./js/import.js"></script>
+
+<script src="./js/libs/ITC_cookie.js"></script>
+<script src="./js/libs/hashchange-event.js"></script>
+<script src="./js/libs/UUID.js"></script>
+<script src="./js/plugins/modal_window.js"></script>
+<script src="./js/plugins/jquery.mustache.js"></script>
+<script src="./js/ui_constructor.js"></script>
+<script src="./js/player.js"></script>
+<!--<script src="./js/demo_player.js"></script>-->
+<script type="text/javascript">
+	var ui_constr = {};
+	var player = {};
+	$(document).ready(function(){
+		ui_constr = new UI_constr();
+		player = new Player();
+		ui_constr.init();
+		player.init();
+	});
+	$(window).hashchange(function() {
+		ui_constr.que = [];
+		ui_constr.paging();
+	});
+</script>
+
+</head>
+<body id="TOP">
+<header>
+	<div id="headerInnter">
+		<h1><a href="#" onClick="ui_constr.click_paging(this.href);"><img src="./images/shared/fix/logo.png" alt="" /></a></h1>
+		<form action="" onSubmit="return ui_constr.search(event);">
+			<div>
+				<p class="text"><input type="text" name="" value="" id="input_search"/></p>
+				<!--<p class="submit"><input type="submit" value="search" /></p>-->
+				<p class="submit"><a href="#" class="header_search" onClick="return ui_constr.search(event);"></a></p>
+			</div>
+		</form>
+		<nav style="display:none;">
+			<ul>
+				<li id="navi04" style="display:none;"><a href="javascript:;" onClick="ui_constr.loginForm();">ログイン</a></li>
+				<li id="navi03" style="display:none;"><a href="javascript:;" onClick="ui_constr.logout();">ログアウト</a></li>
+				<li id="navi02" style="display:none;">
+						<a href="javascript:;" class="popupMenuTrigger">ユーザー名</a>
+						<ol class="popupMenu">
+							<li><a href="#myAccount" class="user"><span>マイアカウント</span></a></li>
+							<li><a href="#help" class="question"><span>ヘルプ</span></a></li>
+							<li><a href="javascript:;" class="attention"><span>ご利用にあたって</span></a></li>
+							<li><a href="javascript:;" class="logout" onClick="ui_constr.logout();"><span>ログアウト</span></a></li>
+						</ol>
+				</li>
+				<li id="navi01" style="display:none;"><a href="javascript:;">お試し残り<span>5</span>日</a></li>
+			</ul>
+		</nav>
+		<section id="player">
+			<div class="onplay_info clearfix">
+				<div id="player_image"><img src="http://develop.deliver.unlimited.recochoku.jp/p/dummy/noimage_60_60.png" /></div>
+				<ul>
+					<li id="player_track_name">曲名</li>
+					<li id="player_artist_name">アーティスト</li>
+					<li id="player_package_name">アルバム</li>
+				</ul>
+			</div>
+			<div id="silverlightControlHost">
+				<!--<img src="./images/sample/player_mock.png" alt=""/>-->
+                <img src="./images/sample/loading45.gif" id="silverlightBusyCursor" alt="busyCursor" style="position:absolute; top:0px; left:300px; width:130px; height:100px; visibility: hidden" />
+				<object id="silverLightArea" data="data:application/x-silverlight-2," type="application/x-silverlight-2">
+					<param name="source" value="/ClientBin/MediaPlayerControl.xap"/>
+					<param name="onload" value="onSilverlightLoaded" />
+					<param name="onError" value="onSilverlightError" />
+					<param name="background" value="transparent" />
+					<param name="windowless" value="true" />
+					<param name="minRuntimeVersion" value="5.0.61118.0" />
+					<param name="autoUpgrade" value="true" />
+					<div style="margin:4px 0;">
+					<p>視聴に必要なソフトウェアがインストールされていないか、バージョンが古い、または無効のため視聴できません。<br ><a target="_blank" href="http://go2.microsoft.com/fwlink/?LinkID=118709">MicrosoftのSilverlight使用許諾</a>に同意の上、下のボタンから最新バージョン（無料）をインストールしてください。</p>
+					<a href="http://go.microsoft.com/fwlink/?LinkID=149156" target="_blank" style="text-decoration:none">
+						<!--<img src="http://go.microsoft.com/fwlink/?LinkId=161376" alt="Microsoft Silverlight の取得" style="border-style:none"/>-->
+						<img src="http://www.microsoft.com/global/ja-jp/silverlight/PublishingImages/download.png" alt="Silverlight のダウンロード (exe 形式/4.7 MB)" width="95" height="30">
+					</a>
+			    </object>
+			</div>
+			<ul class="play_ctrl">
+				<li id="playerBtn05">
+					<a href="javascript:;" class="popupMenuTrigger">a</a>
+					<ol class="popupMenu">
+						<li><a href="javascript:;" class="re"><span>ダウンロード購入</span></a></li>
+						<li><a href="javascript:;" class="cd"><span>CDを購入</span></a></li>
+					</ol>
+				</li>
+				<li id="playerBtn04"><a href="javascript:;">b</a></li>
+				<li id="playerBtn03">
+					<a href="javascript:;" class="popupMenuTrigger">c</a>
+					<ol class="popupMenu">
+						<li><a href="javascript:;" class="add"><span>プレイリストに追加</span></a></li>
+						<li><a href="javascript:;" class="new"><span>新規プレイリストを作成</span></a></li>
+					</ol>
+				</li>
+				<li id="playerBtn02"><a href="javascript:;"></a></li>
+				<li id="playerBtn01"><a href="javascript:;"></a></li>
+			</ul>
+		</section>
+	</div>
+</header>
+
+<div id="wrapper" class="subpage">
+	<aside>
+		<nav>
+			<ul id="basicNavi">
+				<li id="basic01"><a href="javascript:;">アーティストベスト</a></li>
+				<li id="basic02"><a href="javascript:;">テーマ別ベスト</a></li>
+				<li id="basic03"><a href="#genreartists" onClick="ui_constr.click_paging(this.href);">ジャンル</a><ul class="genre_menu"></ul></li>
+				<li id="basic04"><a href="javascript:;">アーティスト一覧</a></li>
+			</ul>
+			<div id="mybestNavi" class="withInner">
+				<p><a href="javascript:;">MyBest</a></p>
+				<div>
+					<ul>
+						<li><a href="javascript:;">お気に入り</a></li>
+						<li><a href="javascript:;">最近再生した曲</a></li>
+						<li><a href="javascript:;">おあずかり</a></li>
+					</ul>
+				</div>
+			</div>
+			<div id="playlistNavi" class="withInner">
+				<p><a href="#myplaylistList" onClick="ui_constr.click_paging(this.href);">マイプレイリスト</a><span><a href="javascript:;" onClick="return ui_constr.myplaylistaddForm();">add</a></span></p>
+				<div>
+					<ul>
+					</ul>
+				</div>
+			</div>
+			<div id="bookmarkNavi" class="withInner">
+				<p><a href="#bookmarkArtists" onClick="ui_constr.click_paging(this.href);">ブックマークアーティスト</a></p>
+				<div>
+					<ul>
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</aside>
+	<div id="main">
+	</div>
+	<!--layer-->
+	<div id="layer" style="display:block;"></div>
+	<!---->
+	<!--layer-->
+	<div id="black_layer" class="op80" style="display:none;"></div>
+	<!---->
+	<!--onPlaying-->
+	<div id="onPlaying" style="display:none;"></div>
+	<!---->
+	<div id="subFooter">&nbsp;</div>
+</div><!--  -->
+
+<footer>
+	<p id="toTop"><a href="#TOP" class="scroll"><img src="./images/shared/totop.png" alt="ページの先頭へ" /></a></p>
+</footer>
+<!--mask-->
+<div id="mask"></div>
+<!---->
+<!--loading-->
+<div id="loading"><img src="./images/shared/loading.gif" alt="loading" /></div>
+<!---->
+<!--modalWinodw-->
+<div id="mw_inc"></div>
+<!---->
+</body>
+</html>
